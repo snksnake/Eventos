@@ -3,6 +3,7 @@ package org.example.eventos;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import static org.example.eventos.Comun.guardarIdRegistro;
 import static org.example.eventos.Comun.mostrarDialogo;
 
 public class EventosFCMService extends FirebaseMessagingService {
@@ -30,5 +31,11 @@ public class EventosFCMService extends FirebaseMessagingService {
                 mostrarDialogo(getApplicationContext(), remoteMessage.getNotification().getBody());
             }
         }
+    }
+
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        guardarIdRegistro(getApplicationContext(), s);
     }
 }

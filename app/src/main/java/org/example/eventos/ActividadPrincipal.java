@@ -12,9 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import static org.example.eventos.Comun.guardarIdRegistro;
 import static org.example.eventos.Comun.mostrarDialogo;
 import static org.example.eventos.EventosFirestore.EVENTOS;
 import static org.example.eventos.EventosFirestore.crearEventos;
@@ -40,6 +44,15 @@ public class ActividadPrincipal extends AppCompatActivity {
             }
         });
 
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
+            @Override
+            public void onSuccess(InstanceIdResult instanceIdResult) {
+                String idPush;
+                idPush = instanceIdResult.getToken();
+                guardarIdRegistro(getApplicationContext(), idPush);
+            }
+        });
 
         //crearEventos();
         Query query = FirebaseFirestore.getInstance().collection(EVENTOS).limit(50);
