@@ -10,6 +10,7 @@ import android.widget.CompoundButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import static org.example.eventos.Comun.eliminarIdRegistro;
 import static org.example.eventos.Comun.guardarIdRegistro;
 import static org.example.eventos.Comun.mostrarDialogo;
 
@@ -81,6 +82,7 @@ public class Temas extends AppCompatActivity {
         }*/
         if (tema.equals("Todos")) {
             if (suscribir) {
+                eliminarIdRegistro(getApplicationContext());
                 FirebaseMessaging.getInstance().unsubscribeFromTopic(tema);
                 guardarSuscripcionATemaEnPreferencias(getApplicationContext(), tema, true);
                 checkBoxDeportes.setChecked(false);
