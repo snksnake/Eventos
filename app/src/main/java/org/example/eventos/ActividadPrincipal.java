@@ -75,6 +75,20 @@ public class ActividadPrincipal extends AppCompatActivity {
             FirebaseMessaging.getInstance().subscribeToTopic("Todos");
         }
 
+        adaptador.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int position = recyclerView.getChildAdapterPosition(view);
+                Evento currentItem = (Evento) adaptador.getItem(position);
+                String idEvento = adaptador.getSnapshots().getSnapshot(position).getId();
+                Context context = getAppContext();
+                Intent intent = new Intent(context, EventoDetalles.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("evento", idEvento);
+                context.startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -142,4 +156,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
     }
 
+    public static Context getAppContext() {
+        return ActividadPrincipal.getCurrentContext();
+    }
 }
