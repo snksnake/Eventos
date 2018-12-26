@@ -15,12 +15,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import static org.example.eventos.Comun.mostrarDialogo;
 import static org.example.eventos.EventosFirestore.EVENTOS;
 import static org.example.eventos.EventosFirestore.crearEventos;
 
 public class ActividadPrincipal extends AppCompatActivity {
 
     private AdaptadorEventos adaptador;
+    private static ActividadPrincipal current;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,7 @@ public class ActividadPrincipal extends AppCompatActivity {
     public void onStart() {
         super.onStart();
         adaptador.startListening();
+        current = this;
     }
 
     @Override
@@ -81,5 +84,19 @@ public class ActividadPrincipal extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static ActividadPrincipal getCurrentContext() {
+        return current;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+        if (getIntent().hasExtra("body")) {
+            mostrarDialogo(this, extras.getString("body"));
+            extras.remove("body");
+        }
     }
 }
