@@ -1,6 +1,8 @@
 package org.example.eventos;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import static org.example.eventos.Comun.guardarIdRegistro;
 import static org.example.eventos.Comun.mostrarDialogo;
@@ -62,6 +65,15 @@ public class ActividadPrincipal extends AppCompatActivity {
         final RecyclerView recyclerView = findViewById(R.id.reciclerViewEventos);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adaptador);
+
+        final SharedPreferences preferencias = getApplicationContext().getSharedPreferences("Temas", Context.MODE_PRIVATE);
+        if (preferencias.getBoolean("Inicializado", false) == false) {
+            final SharedPreferences prefs = getApplicationContext().getSharedPreferences("Temas", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("Inicializado", true);
+            editor.commit();
+            FirebaseMessaging.getInstance().subscribeToTopic("Todos");
+        }
 
     }
 
