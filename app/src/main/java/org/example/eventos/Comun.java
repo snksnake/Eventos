@@ -6,6 +6,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -16,6 +18,8 @@ public class Comun {
     static final String URL_SERVIDOR = "https://cursofirebase.000webhostapp.com/notificaciones/";
     static String ID_PROYECTO = "eventos-51c1f";//eventos-51c1f
     String idRegistro = "";
+    public static FirebaseStorage storage;
+    public static StorageReference storageRef;
 
     static void mostrarDialogo(final Context context
             , final String mensaje) {
@@ -77,6 +81,8 @@ public class Comun {
         tarea.idRegistroTarea = FirebaseInstanceId.getInstance().getToken();
         tarea.execute();
     }
+
+    public static StorageReference getStorageReference() {return storageRef;}
 
     public static class desregistrarDispositivoEnServidorWebTask extends AsyncTask<Void, Void, String> {
         String response = "error";
