@@ -56,6 +56,7 @@ public class EventoDetalles extends AppCompatActivity {
     final int SOLICITUD_SUBIR_PUTFILE = 2;
     final int SOLICITUD_SELECCION_STREAM = 100;
     final int SOLICITUD_SELECCION_PUTFILE = 101;
+    final int SOLICITUD_FOTOGRAFIAS_DRIVE = 102;
 
     static UploadTask uploadTask = null;
     StorageReference imagenRef;
@@ -113,6 +114,11 @@ public class EventoDetalles extends AppCompatActivity {
                 break;
             case R.id.action_getFile:
                 descargarDeFirebaseStorage(evento);
+                break;
+            case R.id.action_fotografiasDrive:
+                Intent intent = new Intent(getBaseContext(), FotografiasDrive.class);
+                intent.putExtra("evento", evento);
+                startActivity(intent);
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -98,7 +98,7 @@ public class ActividadPrincipal extends AppCompatActivity {
         storage = FirebaseStorage.getInstance();
         Comun.storageRef = storage.getReferenceFromUrl("gs://eventos-51c1f.appspot.com/");
 
-        String[] PERMISOS = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        String[] PERMISOS = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.GET_ACCOUNTS};
         ActivityCompat.requestPermissions(this, PERMISOS, 1);
 
     }
