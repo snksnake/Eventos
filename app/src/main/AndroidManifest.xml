@@ -81,7 +81,7 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".EventoWebActivity"></activity>
+        <activity android:name=".EventosWeb"></activity>
     </application>
 
 </manifest>

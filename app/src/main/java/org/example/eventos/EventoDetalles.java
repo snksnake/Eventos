@@ -122,7 +122,7 @@ public class EventoDetalles extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.action_acercaDe:
-                Intent intentWeb = new Intent(getBaseContext(), EventoWebActivity.class);
+                Intent intentWeb = new Intent(getBaseContext(), EventosWeb.class);
                 intentWeb.putExtra("evento", evento);
                 startActivity(intentWeb);
                 break;
