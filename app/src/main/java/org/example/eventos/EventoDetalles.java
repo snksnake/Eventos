@@ -58,6 +58,7 @@ public class EventoDetalles extends AppCompatActivity {
     final int SOLICITUD_SELECCION_PUTFILE = 101;
     final int SOLICITUD_FOTOGRAFIAS_DRIVE = 102;
 
+
     static UploadTask uploadTask = null;
     StorageReference imagenRef;
 
@@ -119,6 +120,11 @@ public class EventoDetalles extends AppCompatActivity {
                 Intent intent = new Intent(getBaseContext(), FotografiasDrive.class);
                 intent.putExtra("evento", evento);
                 startActivity(intent);
+                break;
+            case R.id.action_acercaDe:
+                Intent intentWeb = new Intent(getBaseContext(), EventoWebActivity.class);
+                intentWeb.putExtra("evento", evento);
+                startActivity(intentWeb);
                 break;
         }
         return super.onOptionsItemSelected(item);
