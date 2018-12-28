@@ -33,8 +33,8 @@ public class EventosWeb extends AppCompatActivity {
         navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
 
-        navegador.loadUrl("https://eventos-51c1f.firebaseapp.com/index.html");
-        //navegador.loadUrl("file:///android_asset/index.html");
+        //navegador.loadUrl("https://eventos-51c1f.firebaseapp.com/index.html");
+        navegador.loadUrl("file:///android_asset/index.html");
 
         navegador.setWebViewClient(new WebViewClient() {
             @Override

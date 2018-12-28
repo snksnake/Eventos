@@ -27,6 +27,10 @@ wiki ="No se encuentra el evento";
 }
 muestra(evento,wiki);
 }
+
+function volver(){
+jsInterfazNativa.volver();
+}
 function muestra(mEvento, mWiki){
 document.getElementById("evento").innerHTML=mEvento;
 document.getElementById("wiki").innerHTML=mWiki;
