@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,25 +77,29 @@ public class EventoDetalles extends AppCompatActivity {
         txtCiudad = (TextView) findViewById(R.id.txtCiudad);
         imgImagen = (ImageView) findViewById(R.id.imgImagen);
         Bundle extras = getIntent().getExtras();
-        evento = extras.getString("evento");
-        if (evento == null) evento = "";
-        registros = FirebaseFirestore.getInstance().collection("eventos");
-        registros.document(evento).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    txtEvento.setText(task.getResult().get("evento").toString());
-                    txtCiudad.setText(task.getResult().get("ciudad").toString());
-                    txtFecha.setText(task.getResult().get("fecha").toString());
-                    new DownloadImageTask((ImageView) imgImagen).execute(task.getResult().get("imagen").toString());
+        //evento = extras.getString("evento");
+        if (!TextUtils.isEmpty(evento)) {
+            if (evento == null) evento = "";
+            registros = FirebaseFirestore.getInstance().collection("eventos");
+            registros.document(evento).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        txtEvento.setText(task.getResult().get("evento").toString());
+                        txtCiudad.setText(task.getResult().get("ciudad").toString());
+                        txtFecha.setText(task.getResult().get("fecha").toString());
+                        new DownloadImageTask((ImageView) imgImagen).execute(task.getResult().get("imagen").toString());
+                    }
                 }
-            }
-        });
+            });
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mFirebaseAnalytics.setUserProperty("evento_detalle", evento);
+        if (!TextUtils.isEmpty(evento)) {
+            mFirebaseAnalytics.setUserProperty("evento_detalle", evento);
+        }
     }
 
     @Override
