@@ -66,9 +66,13 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="eventos-51c1f.firebaseapp.com"
+                    android:host="principal.eventos-xxxx.firebaseapp.com"
+                    android:scheme="http" />
+                <data
+                    android:host="principal.eventos-xxxx.firebaseapp.com"
                     android:scheme="https" />
             </intent-filter>
+            
         </activity>
         <activity
             android:name=".FotografiasDrive"
