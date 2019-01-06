@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -22,6 +23,9 @@ public class Comun {
     public static FirebaseStorage storage;
     public static StorageReference storageRef;
     public static FirebaseAnalytics mFirebaseAnalytics;
+    static FirebaseRemoteConfig mFirebaseRemoteConfig;
+    static String colorFondo;
+    static Boolean acercaDe;
 
     static void mostrarDialogo(final Context context
             , final String mensaje) {
@@ -84,7 +88,9 @@ public class Comun {
         tarea.execute();
     }
 
-    public static StorageReference getStorageReference() {return storageRef;}
+    public static StorageReference getStorageReference() {
+        return storageRef;
+    }
 
     public static class desregistrarDispositivoEnServidorWebTask extends AsyncTask<Void, Void, String> {
         String response = "error";

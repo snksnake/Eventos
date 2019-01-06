@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -18,6 +20,14 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.appinvite.AppInvite;
+import com.google.android.gms.appinvite.AppInviteInvitation;
+import com.google.android.gms.appinvite.AppInviteInvitationResult;
+import com.google.android.gms.appinvite.AppInviteReferral;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,20 +35,26 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import static org.example.eventos.Comun.acercaDe;
 import static org.example.eventos.Comun.guardarIdRegistro;
 import static org.example.eventos.Comun.mFirebaseAnalytics;
+import static org.example.eventos.Comun.mFirebaseRemoteConfig;
 import static org.example.eventos.Comun.mostrarDialogo;
 import static org.example.eventos.Comun.storage;
 import static org.example.eventos.EventosFirestore.EVENTOS;
 import static org.example.eventos.EventosFirestore.crearEventos;
 
-public class ActividadPrincipal extends AppCompatActivity {
+public class ActividadPrincipal extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private AdaptadorEventos adaptador;
     private static ActividadPrincipal current;
+    private GoogleApiClient mGoogleApiClient;
+    private static final int REQUEST_INVITE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +122,53 @@ public class ActividadPrincipal extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, PERMISOS, 1);
 
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this).addApi(AppInvite.API).enableAutoManage(this, this).build();
+
+        boolean autoLaunchDeepLink = true;
+        AppInvite.AppInviteApi.getInvitation(mGoogleApiClient, this, autoLaunchDeepLink).setResultCallback(new ResultCallback<AppInviteInvitationResult>() {
+            @Override
+            public void onResult(AppInviteInvitationResult result) {
+                if (result.getStatus().isSuccess()) {
+                    Intent intent = result.getInvitationIntent();
+                    String deepLink = AppInviteReferral.getDeepLink(intent);
+                    String invitationId = AppInviteReferral.getInvitationId(intent);
+                    android.net.Uri url = Uri.parse(deepLink);
+                    String descuento = url.getQueryParameter("descuento");
+                    mostrarDialogo(getApplicationContext(), "Tienes un descuento del " + descuento + "% gracias a la invitación: " + invitationId);
+                }
+            }
+        });
+
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder().setDeveloperModeEnabled(BuildConfig.DEBUG).build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_default);
+
+        long cacheExpiration = 3600;
+        mFirebaseRemoteConfig.fetch(cacheExpiration).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                mFirebaseRemoteConfig.activateFetched();
+                getColorFondo();
+                getAcercaDe();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Comun.colorFondo = mFirebaseRemoteConfig.getString("color_fondo");
+                acercaDe = mFirebaseRemoteConfig.getBoolean("acerca_de");
+            }
+        });
+    }
+
+    private void getColorFondo() {
+        Comun.colorFondo = mFirebaseRemoteConfig.getString("color_fondo");
+    }
+
+    private void getAcercaDe() {
+        acercaDe = mFirebaseRemoteConfig.getBoolean("acerca_de");
     }
 
     @Override
@@ -150,6 +213,9 @@ public class ActividadPrincipal extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
+        if (id == R.id.action_invitar) {
+            invitar();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -190,5 +256,27 @@ public class ActividadPrincipal extends AppCompatActivity {
 
     public static Context getAppContext() {
         return ActividadPrincipal.getCurrentContext();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Toast.makeText(this, "Error al enviar la invitación", Toast.LENGTH_LONG);
+    }
+
+    private void invitar() {
+        Intent intent = new AppInviteInvitation.IntentBuilder(getString(R.string.invitation_title)).setMessage(getString(R.string.invitation_message)).setDeepLink(Uri.parse(getString(R.string.invitation_deep_link))).setCustomImage(Uri.parse(getString(R.string.invitation_custom_image))).setCallToActionText(getString(R.string.invitation_cta)).build();
+        startActivityForResult(intent, REQUEST_INVITE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_INVITE) {
+            if (resultCode == RESULT_OK) {
+                String[] ids = AppInviteInvitation.getInvitationIds(resultCode, data);
+            } else {
+                Toast.makeText(this, "Error al enviar la invitación", Toast.LENGTH_LONG);
+            }
+        }
     }
 }

@@ -28,8 +28,6 @@ public class EventosWeb extends AppCompatActivity {
         navegador.getSettings().setJavaScriptEnabled(true);
 
 
-
-
         navegador.getSettings().setJavaScriptEnabled(true);
         navegador.getSettings().setBuiltInZoomControls(false);
 
@@ -65,12 +63,15 @@ public class EventosWeb extends AppCompatActivity {
 
     public class InterfazComunicacion {
         Context mContext;
+
         InterfazComunicacion(Context c) {
             mContext = c;
         }
+
         @JavascriptInterface
-        public void volver(){
+        public void volver() {
             finish();
         }
     }
+
 }

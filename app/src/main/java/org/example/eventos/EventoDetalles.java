@@ -77,9 +77,13 @@ public class EventoDetalles extends AppCompatActivity {
         txtCiudad = (TextView) findViewById(R.id.txtCiudad);
         imgImagen = (ImageView) findViewById(R.id.imgImagen);
         Bundle extras = getIntent().getExtras();
-        //evento = extras.getString("evento");
-        if (!TextUtils.isEmpty(evento)) {
-            if (evento == null) evento = "";
+        evento = extras.getString("evento");
+
+        if (evento==null) {
+            android.net.Uri url = getIntent().getData();
+            evento = url.getQueryParameter("evento");
+        }
+
             registros = FirebaseFirestore.getInstance().collection("eventos");
             registros.document(evento).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -92,14 +96,15 @@ public class EventoDetalles extends AppCompatActivity {
                     }
                 }
             });
-        }
+
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (!TextUtils.isEmpty(evento)) {
+        if (evento == null) {
             mFirebaseAnalytics.setUserProperty("evento_detalle", evento);
         }
+
     }
 
     @Override
