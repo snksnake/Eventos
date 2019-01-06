@@ -49,6 +49,10 @@ import static org.example.eventos.Comun.storage;
 import static org.example.eventos.EventosFirestore.EVENTOS;
 import static org.example.eventos.EventosFirestore.crearEventos;
 
+import com.crashlytics.android.Crashlytics;
+
+import io.fabric.sdk.android.Fabric;
+
 public class ActividadPrincipal extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private AdaptadorEventos adaptador;
@@ -161,6 +165,8 @@ public class ActividadPrincipal extends AppCompatActivity implements GoogleApiCl
                 acercaDe = mFirebaseRemoteConfig.getBoolean("acerca_de");
             }
         });
+
+        Fabric.with(this, new Crashlytics());
     }
 
     private void getColorFondo() {
@@ -205,6 +211,10 @@ public class ActividadPrincipal extends AppCompatActivity implements GoogleApiCl
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        if (id == R.id.action_error) {
+            Crashlytics.getInstance().crash();
+            return true;
+        }
         if (id == R.id.action_temas) {
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "suscripciones");

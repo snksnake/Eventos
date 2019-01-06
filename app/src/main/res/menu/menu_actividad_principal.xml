@@ -13,4 +13,10 @@
         android:orderInCategory="50"
         android:title="Invitar"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_error"
+        android:orderInCategory="101"
+        android:title="Error"
+        app:showAsAction="never" />
 </menu>
